@@ -2,7 +2,7 @@
 /**
  * Plugin Name: EPFL Restauration
  * Description: provides a shortcode to display cafeterias and restaurant menus offers
- * Version: 0.2
+ * Version: 0.3
  * Author: Lucien Chaboudez
  * Contributors:
  * License: Copyright (c) 2019 Ecole Polytechnique Federale de Lausanne, Switzerland

@@ -8,17 +8,20 @@
  * License: Copyright (c) 2019 Ecole Polytechnique Federale de Lausanne, Switzerland
  **/
 
+// Analysis with sections
+$ini_array_sections = parse_ini_file("menus.ini", true);
 
 function epfl_restauration_process_shortcode( $atts, $content = null ) {
 
     global $wp;
+    global $ini_array_sections;
 
     $atts = shortcode_atts( array(
         'params' => '',
         'type' => 'menu', // can be 'menu' or 'schedule'
     ), $atts );
 
-    /* We remove ? at the beginning if any*/
+    /* We remove ? at the beginning if any */
     $params = preg_replace('/^\?/', '', $atts['params']);
     $type = sanitize_text_field($atts['type']);
 
@@ -29,7 +32,7 @@ function epfl_restauration_process_shortcode( $atts, $content = null ) {
         /* Prod */
         $url = 'https://menus.epfl.ch/cgi-bin/getHoraire?'. $params;
         /* uncomment following line to access test environment */
-        //$url = 'https://test-menus.epfl.ch/cgi-bin/getHoraire?'. $params;
+//        $url = 'https://test-menus.epfl.ch/cgi-bin/getHoraire?'. $params;
 
         $response = wp_remote_get($url);
 
@@ -54,16 +57,12 @@ function epfl_restauration_process_shortcode( $atts, $content = null ) {
             /* While rendering the iframe, we have to add current URL in 'name' attribute. This then will be used by JavaScript
              code in iframe content to know where to send a message to tell iframe's height. This information will be used by
              JavaScript code in 'js/script.js' to resize iframe */
-?>
-        <iframe src="<?PHP echo $url; ?>" name="<?PHP echo home_url( $wp->request ); ?>" frameborder="0" height="500" width="100%" scrolling="no" id="epfl-restauration">
-        </iframe>
-<?php
+
+        include('menus.php');
 
         return ob_get_clean();
 
-
     }
-
 
 }
 
@@ -71,3 +70,30 @@ add_action( 'init', function() {
   // define the shortcode
   add_shortcode('epfl_restauration', 'epfl_restauration_process_shortcode');
 });
+
+// Function used to call the API according to the day selected
+function current_date($selected_day){
+    $today = date('Y-m-d');
+    // add 1 day to the date above
+    return date('Y-m-d', strtotime( $today . " +" . $selected_day . "days"));
+}
+
+// Web page content traduction
+function trad($key_to_traduct, $lang) {
+    global $ini_array_sections;
+
+    if (!isset($lang)) {
+        $lang = "fr";
+    }
+    return $ini_array_sections['txt_'.$lang][$key_to_traduct];
+}
+
+// Function used to show the weeks of day and select the menus according to the day selected
+function week_days($select_day){
+    $current_date = date('Y-m-d');
+    // add X days to the current date
+    $current_date_plus_x = date('D', strtotime( $current_date . " +" . $select_day . "days"));
+    return date_i18n('D', strtotime($current_date_plus_x));
+//    return strftime('%a',strtotime($current_date_plus_x));
+}
+

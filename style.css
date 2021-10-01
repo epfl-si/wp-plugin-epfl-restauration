@@ -1,0 +1,19 @@
+img{
+    width: 75px;
+    padding-top: 10px;
+}
+
+.ms-choice{
+    width: 100%;
+}
+
+.ms-drop{
+    width: fit-content;
+}
+
+.ms-choice:hover{
+    background: #E6E6E6;
+
+}
+
+

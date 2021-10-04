@@ -22,7 +22,8 @@ $images_path = "/wp-content/plugins/epfl-restauration/resources/images/";
 $vars = parse_url( $params, $component = -1 );
 
 parse_str($params, $params_array);
-$lang = $params_array['lang'];
+
+
 //echo '<h1>' . $lang . '</h1>';
 //echo '<h1>' . $params_array['resto_id'] . '</h1>';
 
@@ -47,18 +48,18 @@ $ini_array = parse_ini_file("menus.ini");
 $remote_url_menus = $ini_array['remote_url_menus'] . $selected_date;
 
 // Language settings
+// Try to get language from WordPress
+if(get_locale() == "en_US" || get_locale() == "en_GB") $params_array['lang'] = "en";
+// Language set to french if empty
 if (empty($params_array['lang']) || $params_array['lang'] == 'fr') {
     $lang = 'fr';
-//    setlocale(LC_ALL, ['fr', 'fra', 'fr_FR']);
     switch_to_locale('fr_FR');
     $menus_categories = 'french_menus_categories';
-
 } else {
     $lang = 'en';
+    switch_to_locale('en_US');
     $menus_categories = 'english_menus_categories';
 }
-
-
 
 // Create a stream
 

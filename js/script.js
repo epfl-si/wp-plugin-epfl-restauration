@@ -219,16 +219,24 @@ $(".filterTags").on('click',".removeTag", function (){
     selectedMenus.multipleSelect('setSelects', selectedMenusArray);
 
 });
-
+// Filter when selecting a restaurant
 $("select.select-resto").change(function (){
     filterMenus();
     updateTags();
 });
 
+// Filter the menu on the initial display
+$(".select-multiple .select-resto").ready(function (){
+    filterMenus();
+    updateTags();
+});
+
+// Filter when selecting a menu type
 $("select.select-menu").change(function () {
     filterMenus();
     updateTags();
 });
+
 // Filter menu page when NutriMenu score change
 $("#nutrimenu-score").change(function () {
     filterMenus();
@@ -236,10 +244,10 @@ $("#nutrimenu-score").change(function () {
 });
 
 // Filter menu page when offer types change
-    $('input[name=offer-type]').change(function () {
-        filterMenus();
-        updateTags();
-    });
+$('input[name=offer-type]').change(function () {
+    filterMenus();
+    updateTags();
+});
 
 // Remove all tags
 $(".removeAll").click(function () {

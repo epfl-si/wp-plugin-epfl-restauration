@@ -1,23 +1,28 @@
 <style>
 
-    .ms-choice{
-        width: 100%;
-    }
-
-    .ms-drop{
-        width: fit-content;
-    }
-
+    /* Change color when mouse on selection list */
     .ms-choice:hover{
         background: #E6E6E6;
     }
 
+    /* Hide red list point */
+    .ms-drop ul li:before{
+        background: none;
+    }
+
+    /* Hide [Select all] option (checkboxes) */
+    .ms-select-all {
+        display:none !important;
+    }
+
+    span.price {
+        style="white-space: nowrap";
+    }
 </style>
 
 <?php
 
-$images_path = "/wp-content/plugins/epfl-restauration/resources/images/";
-//$images_path = "/resources/images";
+$images_path = "/wp-content/plugins/epfl-restauration/images/";
 
 $vars = parse_url( $params, $component = -1 );
 
@@ -93,16 +98,17 @@ $restaurants = array_values(array_unique($restaurants, SORT_REGULAR));
         <?php
         // Return the current day and the six next days of the week
         for ($i = 0; $i < 7; $i++){
-            if(current_date($i) == $selected_date) {
-                // 'active' represents the active tab
-                $active = 'active';
-            }
-            else {
-                $active = '';
-            }
+            $current_date = date('Y-m-d', strtotime( " +" . $i . "days"));
+            // 'active' represents the active tab
+            $active = ($current_date == $selected_date)?"active":"";
+            $item_class = ($i>5)?"d-none d-sm-inline":"";
             ?>
-            <li class="nav-item">
-                <a class="nav-link <?= $active ?>" data-toggle="tab" href="" onclick="window.location.href='?date=<?= current_date($i) ?>'" role="tab" aria-controls="day" aria-selected="true"><?php echo week_days($i); ?></a>
+            <li class="nav-item <?= $item_class ?>">
+                <a class="nav-link <?= $active ?>" data-toggle="tab" href="" onclick="window.location.href='?date=<?= $current_date ?>'" role="tab" aria-controls="day" aria-selected="true">
+                    <?php
+                    // add X days to the current date
+                    echo date_i18n('D',  strtotime( " +" . $i . "days")); ?>
+                </a>
             </li>
             <?php
         }
@@ -114,7 +120,7 @@ $restaurants = array_values(array_unique($restaurants, SORT_REGULAR));
         <div class="tab-pane fade show active" id="day1" role="tabpanel" aria-labelledby="day1-tab">
             <div class="row my-3">
 
-                <div class="col-md-3">
+                <div class="col-md-4 col-xl-3">
                     <div class="form-group">
                         <label for="mySelectID"><?php echo trad('restaurants_selection', $lang) ?></label>
                         <select id="mySelectID" class="select-multiple select-resto" multiple="multiple" data-placeholder="<?php echo trad('restaurants_list', $lang) ?>">
@@ -133,7 +139,7 @@ $restaurants = array_values(array_unique($restaurants, SORT_REGULAR));
                     </div>
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-4 col-xl-3">
                     <div class="form-group">
                         <label for="types-menus"><?php echo trad('menus_selection', $lang) ?></label>
                         <select id="types-menus" class="select-multiple select-menu" multiple="multiple" data-placeholder="<?php echo trad('menus_types', $lang) ?>">
@@ -146,7 +152,7 @@ $restaurants = array_values(array_unique($restaurants, SORT_REGULAR));
                     </div>
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-4 col-xl-3">
                     <div class="form-group">
                         <label for="formControlRange"><?php echo trad('minimum_nutrimenu_score', $lang) ?></label>
                         <label for="nutrimenu-score"></label>
@@ -156,7 +162,7 @@ $restaurants = array_values(array_unique($restaurants, SORT_REGULAR));
 
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-12 col-xl-3">
                     <div class="custom-controls-inline">
                         <div class="custom-control custom-radio">
                             <input type="radio" id="offer-lunch" name="offer-type" value="lunch" class="custom-control-input" checked>
@@ -169,7 +175,7 @@ $restaurants = array_values(array_unique($restaurants, SORT_REGULAR));
                     </div>
                 </div>
             </div>
-            <div>
+            <div class="row">
                 <div class="col-12">
                     <div class="tag-group mb-3">
                         <label for=""><?php echo trad('search_filters', $lang) ?></label>
@@ -216,32 +222,32 @@ $restaurants = array_values(array_unique($restaurants, SORT_REGULAR));
 
                                     echo '<tr class="menuPage' . $category . ' ' . $mealtype . '" data-mealtype="" data-restoid="'.$restaurant['id'].'" data-ns-score="' . $nutri_score_value . '">';
 
-                                        echo '<td>';
+                                        echo '<td class="menu">';
+                                        echo '<div class="menu-content"><div class="descr">';
                                         foreach ($meals['items'] as $item) {
                                             if(!empty($item['recipe']['name'])) {
                                                 if ($item['menuSection'] == 'mainCourse') {
-                                                    echo '<div class=""><b>' . $item['recipe']['name'] . '</b></div>';
+                                                    echo '<b>' . $item['recipe']['name'] . '</b>';
                                                 } else {
-                                                    echo '<div class="">' . $item['recipe']['name'] . '</div>';
+                                                    echo '<br>' . $item['recipe']['name'];
                                                 }
                                             }
 
                                             if(!empty($item['recipe']['notesOrigin'])){
-                                                echo '<div class=""><em>' . $item['recipe']['notesOrigin'] . '</em></div>';
+                                                echo '<br><em>' . $item['recipe']['notesOrigin'] . '</em>';
                                             }
 
                                         }
-                                        echo '</td>';
-
-                                        echo '<td>';
+                                        echo '</div>';
 
                                         if (isset($meals['evaluation']['nutriScore'])) {
-                                            echo '<div><img src="' . $images_path . 'nutriMenu_score_' . $meals['evaluation']['nutriScore'] . '.png' . '" alt="NutriScore" style="width: 75px; padding-top: 10px;"></div>';
+                                            echo '<div class="nutrimenu"><img src="' . $images_path . 'nutriMenu_score_' . $meals['evaluation']['nutriScore'] . '.svg' . '" alt="NutriScore" height="80"></div>';
                                         }
 
+                                        echo '</div>';
                                         echo '</td>';
 
-                                        echo '<td>';
+                                        echo '<td class="d-none d-md-table-cell">';
                                         echo '<div class="">' . $menuLine['name'] . '</div>';
                                         echo '</td>';
 
@@ -255,17 +261,17 @@ $restaurants = array_values(array_unique($restaurants, SORT_REGULAR));
                                             foreach ($meals['prices'] as $price) {
                                                 switch ($price['description']) {
                                                     case "PersonStudent":
-                                                        echo '<div><abbr title="Prix étudiant" class="text-primary">E </abbr>' . $price['price'] . ' ' . $price['currency'] . '</div>';
+                                                        echo '<span class="price" style="white-space: nowrap"><abbr title="Prix étudiant" class="text-primary">E </abbr>' . $price['price'] . ' ' . $price['currency'] . '</span>';
                                                         break;
 
                                                     case "PersonEmployee":
-                                                        echo '<div><abbr title="Prix campus" class="text-primary">C </abbr>' . $price['price'] . ' ' . $price['currency'] . '</div>';
+                                                        echo '<span class="price" style="white-space: nowrap"><abbr title="Prix campus" class="text-primary">C </abbr>' . $price['price'] . ' ' . $price['currency'] . '</span>';
                                                         break;
                                                     case "PersonOther":
-                                                        echo '<div><abbr title="Prix visiteurs" class="text-primary">V </abbr>' . $price['price'] . ' ' . $price['currency'] . '</div>';
+                                                        echo '<span class="price" style="white-space: nowrap"><abbr title="Prix visiteurs" class="text-primary">V </abbr>' . $price['price'] . ' ' . $price['currency'] . '</span>';
                                                         break;
                                                     default:
-                                                        echo '<div>' . $price['price'] . ' ' . $price['currency'] . '</div>';
+                                                        echo '<span class="price" style="white-space: nowrap">' . $price['price'] . ' ' . $price['currency'] . '</span>';
                                                 }
                                             }
                                         }

@@ -71,13 +71,6 @@ add_action( 'init', function() {
   add_shortcode('epfl_restauration', 'epfl_restauration_process_shortcode');
 });
 
-// Function used to call the API according to the day selected
-function current_date($selected_day){
-    $today = date('Y-m-d');
-    // add 1 day to the date above
-    return date('Y-m-d', strtotime( $today . " +" . $selected_day . "days"));
-}
-
 // Web page content traduction
 function trad($key_to_traduct, $lang) {
     global $ini_array_sections;
@@ -86,14 +79,5 @@ function trad($key_to_traduct, $lang) {
         $lang = "fr";
     }
     return $ini_array_sections['txt_'.$lang][$key_to_traduct];
-}
-
-// Function used to show the weeks of day and select the menus according to the day selected
-function week_days($select_day){
-    $current_date = date('Y-m-d');
-    // add X days to the current date
-    $current_date_plus_x = date('D', strtotime( $current_date . " +" . $select_day . "days"));
-    return date_i18n('D', strtotime($current_date_plus_x));
-//    return strftime('%a',strtotime($current_date_plus_x));
 }
 

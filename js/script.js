@@ -1,10 +1,5 @@
 $(document).ready(function () {
 
-// Hide [Select all] option (checkboxes)
-setTimeout(function (){
-    $(".ms-select-all").hide();
-}, 1);
-
 // Filter the menu page according to the restaurants list, menus types list, nutriscore and day offers
 // Hide all the options that are not in the filter
 function filterMenus(){

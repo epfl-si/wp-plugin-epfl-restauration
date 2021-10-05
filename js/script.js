@@ -8,21 +8,38 @@ function filterMenus(){
     var menusTypeList = $("select option:selected.menus");
     var offerType = $('input[name=offer-type]:checked').val();
     var currentNutriScore = $("#nutrimenu-score").val();
+    // const nutriScoresArray = [
+    //     {"txt": "-", "val": 0},
+    //     {"txt": "E", "val": 0.5},
+    //     {"txt": "D-", "val": 0.59999},
+    //     {"txt": "D", "val": 0.62999},
+    //     {"txt": "D+", "val": 0.66999},
+    //     {"txt": "C-", "val": 0.69999},
+    //     {"txt": "C", "val": 0.72999},
+    //     {"txt": "C+", "val": 0.76999},
+    //     {"txt": "B-", "val": 0.79999},
+    //     {"txt": "B", "val": 0.82999},
+    //     {"txt": "B+", "val": 0.86999},
+    //     {"txt": "A-", "val": 0.89999},
+    //     {"txt": "A", "val": 0.92999},
+    //     {"txt": "A+", "val": 0.96999}
+    // ]
+
     const nutriScoresArray = [
         {"txt": "-", "val": 0},
-        {"txt": "E", "val": 0.5},
-        {"txt": "D-", "val": 0.59999},
-        {"txt": "D", "val": 0.62999},
-        {"txt": "D+", "val": 0.66999},
-        {"txt": "C-", "val": 0.69999},
-        {"txt": "C", "val": 0.72999},
-        {"txt": "C+", "val": 0.76999},
-        {"txt": "B-", "val": 0.79999},
-        {"txt": "B", "val": 0.82999},
-        {"txt": "B+", "val": 0.86999},
-        {"txt": "A-", "val": 0.89999},
-        {"txt": "A", "val": 0.92999},
-        {"txt": "A+", "val": 0.96999}
+        {"txt": "E", "val": 1},
+        {"txt": "D-", "val": 2},
+        {"txt": "D", "val": 3},
+        {"txt": "D+", "val": 4},
+        {"txt": "C-", "val": 5},
+        {"txt": "C", "val": 6},
+        {"txt": "C+", "val": 7},
+        {"txt": "B-", "val": 8},
+        {"txt": "B", "val": 9},
+        {"txt": "B+", "val": 10},
+        {"txt": "A-", "val": 11},
+        {"txt": "A", "val": 12},
+        {"txt": "A+", "val": 13}
     ]
 
     console.log("NutriScore sélectionné : ");
@@ -96,7 +113,7 @@ function filterMenus(){
             menuLine.hide();
         }
 
-        console.log('NS du menu (auto) : ' + nsValue + ', NS sélectionné -> ' + nutriScoresArray[currentNutriScore].txt + ' : ' + nutriScoresArray[currentNutriScore].val);
+        // console.log('NS du menu (auto) : ' + nsValue + ', NS sélectionné -> ' + nutriScoresArray[currentNutriScore].txt + ' : ' + nutriScoresArray[currentNutriScore].val);
 
     });
 

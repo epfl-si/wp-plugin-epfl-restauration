@@ -194,11 +194,14 @@ $restaurants = array_values(array_unique($restaurants, SORT_REGULAR));
                     <tbody>
                     <?php
 
+                    $nutri_score_array = ["-","E","D-","D","D+","C-","C","C+","B-","B","B+","A-","A","A+"];
+
                     foreach ($restaurants as $restaurant) {
                         foreach ($restaurant['menuLines'] as $menuLine) {
                             $category = "";
                             $mealtype = "";
                             $nutri_score_value = null;
+                            $nutri_score = null;
 
                             if(is_array($menuLine['meals']) && count($menuLine['meals']) > 0){
 
@@ -216,11 +219,17 @@ $restaurants = array_values(array_unique($restaurants, SORT_REGULAR));
 
                                     $mealtype = $meals['mealType'];
 
+//                                    if(!empty($meals['evaluation']['nutriScore'])) {
+//                                        $nutri_score_value = $meals['evaluation']['nutriScoreValue'];
+//                                    }
+
+
                                     if(!empty($meals['evaluation']['nutriScore'])) {
-                                        $nutri_score_value = $meals['evaluation']['nutriScoreValue'];
+                                        $nutri_score = $meals['evaluation']['nutriScore'];
+                                        $nutri_score_value = array_search($nutri_score,$nutri_score_array);
                                     }
 
-                                    echo '<tr class="menuPage' . $category . ' ' . $mealtype . '" data-mealtype="" data-restoid="'.$restaurant['id'].'" data-ns-score="' . $nutri_score_value . '">';
+                                    echo '<tr class="menuPage' . $category . ' ' . $mealtype . '" data-mealtype="" data-restoid="'.$restaurant['id'].'" data-ns-score="' . $nutri_score_value . '" data-ns-score-txt="' . $nutri_score . '">';
 
                                         echo '<td class="menu">';
                                         echo '<div class="menu-content"><div class="descr">';
@@ -247,9 +256,9 @@ $restaurants = array_values(array_unique($restaurants, SORT_REGULAR));
                                         echo '</div>';
                                         echo '</td>';
 
-                                        echo '<td class="d-none d-md-table-cell">';
-                                        echo '<div class="">' . $menuLine['name'] . '</div>';
-                                        echo '</td>';
+//                                        echo '<td class="d-none d-md-table-cell">';
+//                                        echo '<div class="">' . $menuLine['name'] . '</div>';
+//                                        echo '</td>';
 
 
                                         echo '<td id="tr_id" class="' . $restaurant['name'] . '">';
@@ -263,7 +272,6 @@ $restaurants = array_values(array_unique($restaurants, SORT_REGULAR));
                                                     case "PersonStudent":
                                                         echo '<span class="price" style="white-space: nowrap"><abbr title="Prix étudiant" class="text-primary">E </abbr>' . $price['price'] . ' ' . $price['currency'] . '</span>';
                                                         break;
-
                                                     case "PersonEmployee":
                                                         echo '<span class="price" style="white-space: nowrap"><abbr title="Prix campus" class="text-primary">C </abbr>' . $price['price'] . ' ' . $price['currency'] . '</span>';
                                                         break;

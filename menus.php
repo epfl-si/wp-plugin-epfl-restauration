@@ -20,77 +20,6 @@
     }
 </style>
 
-<?php
-
-$images_path = "/wp-content/plugins/epfl-restauration/images/";
-
-$vars = parse_url( $params, $component = -1 );
-
-parse_str($params, $params_array);
-
-
-//echo '<h1>' . $lang . '</h1>';
-//echo '<h1>' . $params_array['resto_id'] . '</h1>';
-
-// Selection date of the menus
-if(empty($_GET['date'])) {
-    $selected_date = date('Y-m-d');
-} else {
-    $selected_date = filter_input(INPUT_GET, 'date', FILTER_SANITIZE_STRING);
-}
-
-// Selection resto_id in URL's parameter
-if(empty($params_array['resto_id'])) {
-    $selected_resto_id = null;
-} else {
-    $selected_resto_id = $params_array['resto_id'];
-}
-
-// Analysis without sections
-$ini_array = parse_ini_file("menus.ini");
-
-// Connection data
-$remote_url_menus = $ini_array['remote_url_menus'] . $selected_date;
-
-// Language settings
-// Try to get language from WordPress
-if(get_locale() == "en_US" || get_locale() == "en_GB") $params_array['lang'] = "en";
-// Language set to french if empty
-if (empty($params_array['lang']) || $params_array['lang'] == 'fr') {
-    $lang = 'fr';
-    switch_to_locale('fr_FR');
-    $menus_categories = 'french_menus_categories';
-} else {
-    $lang = 'en';
-    switch_to_locale('en_US');
-    $menus_categories = 'english_menus_categories';
-}
-
-// Create a stream
-
-$cred = sprintf('Authorization: Basic %s',
-    base64_encode($ini_array_sections['remote_url']['username_menus'] . ':' . $ini_array_sections['remote_url']['password_menus']));
-$opts = array(
-    'http'=>array(
-        'method'=>"GET",
-        'header' => $cred
-    ),
-    "ssl"=>array(
-        "verify_peer"=>false,
-        "verify_peer_name"=>false,
-    )
-);
-$context = stream_context_create($opts);
-$menus_file = file_get_contents($remote_url_menus, false, $context);
-
-// Decodes JSON's file
-$restaurants = json_decode($menus_file,true);
-$restaurants = array_values(array_unique($restaurants, SORT_REGULAR));
-
-
-
-?>
-
 <!--<div class="container-full mx-3">-->
 <div class="container">
     <ul class="nav nav-tabs" role="tablist">
@@ -195,6 +124,7 @@ $restaurants = array_values(array_unique($restaurants, SORT_REGULAR));
                     <?php
 
                     $nutri_score_array = ["-","E","D-","D","D+","C-","C","C+","B-","B","B+","A-","A","A+"];
+                    $eco_score_array = ["-","A","B","C","D","E"];
 
                     foreach ($restaurants as $restaurant) {
                         foreach ($restaurant['menuLines'] as $menuLine) {
@@ -219,41 +149,55 @@ $restaurants = array_values(array_unique($restaurants, SORT_REGULAR));
 
                                     $mealtype = $meals['mealType'];
 
-//                                    if(!empty($meals['evaluation']['nutriScore'])) {
-//                                        $nutri_score_value = $meals['evaluation']['nutriScoreValue'];
-//                                    }
-
-
                                     if(!empty($meals['evaluation']['nutriScore'])) {
                                         $nutri_score = $meals['evaluation']['nutriScore'];
                                         $nutri_score_value = array_search($nutri_score,$nutri_score_array);
+                                    }
+                                    if(!empty($meals['evaluation']['ecoScore'])) {
+                                        $eco_score = $meals['evaluation']['ecoScore'];
+                                        $eco_score_value = array_search($eco_score,$eco_score_array);
                                     }
 
                                     echo '<tr class="menuPage' . $category . ' ' . $mealtype . '" data-mealtype="" data-restoid="'.$restaurant['id'].'" data-ns-score="' . $nutri_score_value . '" data-ns-score-txt="' . $nutri_score . '">';
 
                                         echo '<td class="menu">';
-                                        echo '<div class="menu-content"><div class="descr">';
-                                        foreach ($meals['items'] as $item) {
-                                            if(!empty($item['recipe']['name'])) {
-                                                if ($item['menuSection'] == 'mainCourse') {
-                                                    echo '<b>' . $item['recipe']['name'] . '</b>';
-                                                } else {
-                                                    echo '<br>' . $item['recipe']['name'];
-                                                }
-                                            }
+                                            echo '<div class="menu-content">';
+//                                                echo '<div class="col-8">';
+                                                    echo '<div class="descr">';
+                                                    foreach ($meals['items'] as $item) {
+                                                        if(!empty($item['recipe']['name'])) {
+                                                            if ($item['menuSection'] == 'mainCourse') {
+                                                                echo '<b>' . $item['recipe']['name'] . '</b><br>';
+                                                            } else {
+                                                                echo $item['recipe']['name'] . '<br>';
+                                                            }
+                                                        }
 
-                                            if(!empty($item['recipe']['notesOrigin'])){
-                                                echo '<br><em>' . $item['recipe']['notesOrigin'] . '</em>';
-                                            }
+                                                        if(!empty($item['recipe']['notesOrigin'])){
+                                                            echo '<em>' . $item['recipe']['notesOrigin'] . '</em><br>';
+                                                        }
 
-                                        }
-                                        echo '</div>';
+                                                    }
+//                                                    echo '</div>';
+                                                echo '</div>';
 
-                                        if (isset($meals['evaluation']['nutriScore'])) {
-                                            echo '<div class="nutrimenu"><img src="' . $images_path . 'nutriMenu_score_' . $meals['evaluation']['nutriScore'] . '.svg' . '" alt="NutriScore" height="80"></div>';
-                                        }
+                                                echo '<div class="nutrimenu">';
+//                                                echo '<div class="col-2">';
+                                                    if (isset($meals['evaluation']['nutriScore'])) {
 
-                                        echo '</div>';
+                                                        echo '<img src="' . $images_path . 'nutriMenu_score_' . $nutri_score . '.svg' . '" alt="NutriScore" height="70">';
+
+                                                    }
+//                                                echo '</div>';
+//                                                echo '<div class="col-2">';
+                                                    if (isset($meals['evaluation']['ecoScore'])) {
+
+                                                        echo '<img src="' . $images_path . 'ecoMenu_score_' . $eco_score . '.svg' . '" alt="EcoScore" height="60">';
+
+                                                    }
+//                                                echo '</div>';
+                                                echo '</div>';
+                                            echo '</div>';
                                         echo '</td>';
 
 //                                        echo '<td class="d-none d-md-table-cell">';
@@ -261,25 +205,30 @@ $restaurants = array_values(array_unique($restaurants, SORT_REGULAR));
 //                                        echo '</td>';
 
 
-                                        echo '<td id="tr_id" class="' . $restaurant['name'] . '">';
-                                        echo '<a href="' . $ini_array[$restaurant['id']] . '">' . $restaurant['name'];
+                                        echo '<td class="restaurant">';
+                                        if(isset($ini_array_sections['url_restaurants'][$restaurant['id']])){
+                                            echo '<a href="' . $ini_array_sections['url_restaurants'][$restaurant['id']] . '">' . $restaurant['name'];
+                                        }
+                                        else{
+                                            echo $restaurant['name'];
+                                        }
                                         echo '</td>';
 
-                                        echo '<td>';
+                                        echo '<td class="prices">';
                                         if (isset($meals['prices']) && count($meals['prices']) > 0) {
                                             foreach ($meals['prices'] as $price) {
                                                 switch ($price['description']) {
                                                     case "PersonStudent":
-                                                        echo '<span class="price" style="white-space: nowrap"><abbr title="Prix étudiant" class="text-primary">E </abbr>' . $price['price'] . ' ' . $price['currency'] . '</span>';
+                                                        echo '<span class="price" style="white-space: nowrap"><abbr title="Prix étudiant" class="text-primary">E</abbr> ' . $price['price'] . ' ' . $price['currency'] . ' </span>';
                                                         break;
                                                     case "PersonEmployee":
-                                                        echo '<span class="price" style="white-space: nowrap"><abbr title="Prix campus" class="text-primary">C </abbr>' . $price['price'] . ' ' . $price['currency'] . '</span>';
+                                                        echo '<span class="price" style="white-space: nowrap"><abbr title="Prix campus" class="text-primary">C</abbr> ' . $price['price'] . ' ' . $price['currency'] . ' </span>';
                                                         break;
                                                     case "PersonOther":
-                                                        echo '<span class="price" style="white-space: nowrap"><abbr title="Prix visiteurs" class="text-primary">V </abbr>' . $price['price'] . ' ' . $price['currency'] . '</span>';
+                                                        echo '<span class="price" style="white-space: nowrap"><abbr title="Prix visiteurs" class="text-primary">V</abbr> ' . $price['price'] . ' ' . $price['currency'] . ' </span>';
                                                         break;
                                                     default:
-                                                        echo '<span class="price" style="white-space: nowrap">' . $price['price'] . ' ' . $price['currency'] . '</span>';
+                                                        echo '<span class="price" style="white-space: nowrap">' . $price['price'] . ' ' . $price['currency'] . ' </span>';
                                                 }
                                             }
                                         }

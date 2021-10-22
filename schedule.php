@@ -13,15 +13,105 @@
 //$current_day = date("w");
 //echo $current_day;
 
+$hours_array = array();
+for($i = 0; $i < 25; $i++){
+    $zero = "0";
+    if($i >= 10) $zero = "";
+    array_push($hours_array, $zero.$i.":00");
+}
+//print_r($hours_array);
+
+
+foreach ($restaurants as $restaurant){
+
+    $hour = "";
+//    for($i = 0; $i < 24; $i++){
+//        $hour = $hour.$i;
+//    }
+    $hour10 = "";
+    $hour12 = "";
+    $hour14 = "";
+    $hour18 = "";
+    $hour9 = "";
+
+    $newHourLine = true;
+    $counter = 0;
+
+    foreach ($restaurant['openingHours'] as $opening_hours){
+
+//        $array_diff = array_diff($hours_array, $opening_hours);
+//        print_r($array_diff);
+
+
+
+        for($i = 1; $i < 24; $i++){
+            if($opening_hours['open'] == $hours_array[10]){     // Changer 10 par une variable testant toutes les heures possibles
+                $hour10 = $hours_array[10] . '<br>';
+            }
+            elseif ($opening_hours['open'] == $hours_array[12]){    // Idem
+                $hour12 = $hours_array[12] . '<br>';
+            }
+            elseif ($opening_hours['open'] == $hours_array[9]){    // Idem
+                $hour9 = $hours_array[9] . '<br>';
+            }
+            // etc... créer boucle prenant les valeurs du tableau d'heures
+        }
+
+        if($opening_hours['close'] == $hours_array[18]){     // Changer 10 par une variable testant toutes les heures possibles
+            $hour18 = $hours_array[18] . '<br>';
+        }
+        elseif ($opening_hours['close'] == $hours_array[14]){    // Idem
+            $hour14 = $hours_array[14] . '<br>';
+        }
+
+
+
+
+
+//        $open_hour = substr($opening_hours['open'], 0, 2);
+//        $open_hour = intval($open_hour);
+//
+//        $close_hour = substr($opening_hours['close'], 0, 2);
+//        $close_hour = intval($close_hour);
+
+        if($opening_hours['dayOfWeek'] != 'Saturday' && $opening_hours['dayOfWeek'] != 'Sunday'){
+            if($counter == 5){
+//                echo $opening_hours['open'] . ' - ' . $opening_hours['close'] . '<br>';
+            }
+//            else {
+//                echo $counter . '<br>';
+//            }
+
+
+
+        }
+
+//        echo 'counter : ' . $counter . '<br>';
+
+
+
+    }
+
+    echo $hour10;
+    echo $hour12;
+    echo $hour14;
+    echo $hour18;
+    echo $hour9;
+
+}
+
+
+
+
 ?>
 
 <div class="table-responsive">
     <table class="table">
         <thead>
         <tr>
-            <th><?php echo trad('restaurant', $lang) ?></th>
-            <th><?php echo trad('opening_time', $lang) ?></th>
-            <th><?php echo trad('closing', $lang) ?></th>
+            <th><?php echo trad('restaurant', $lang); ?></th>
+            <th><?php echo trad('opening_time', $lang); ?></th>
+            <th><?php echo trad('closing', $lang); ?></th>
         </tr>
         </thead>
         <tbody>
@@ -34,7 +124,6 @@
                         echo '<td>';
                             $day_of_week = "";
                             $newDayLine = true;
-                            $counter = 0;
                             $sunday_array = array();
 
 
@@ -45,15 +134,12 @@
 
                                     if($day_of_week != $opening_hours['dayOfWeek']){
 
-//                                        $counter++;
-
                                         $day_of_week = $opening_hours['dayOfWeek'];
 
                                         $newDayLine = true;
 
-//                                        if($counter != 0){
-                                        if($day_of_week != "Sunday"){
-                                            echo $day_of_week;
+                                        if($day_of_week != 'Sunday'){
+                                            echo trad($opening_hours['dayOfWeek'], $lang);
                                         }
                                         else{
                                             $sunday_array[] = $opening_hours['dayOfWeek'];
@@ -61,7 +147,6 @@
 
                                         }
 
-//                                        }
 
                                     } else {
 //                                        echo $days[0];
@@ -73,7 +158,7 @@
                                     echo '</div>';
                                     echo '<div class="col-6">';
 
-                                    if($opening_hours['isClosed'] && $newDayLine && $opening_hours['dayOfWeek'] != "Sunday"){
+                                    if($opening_hours['isClosed'] && $newDayLine && $opening_hours['dayOfWeek'] != 'Sunday'){
                                         echo trad('closed', $lang);
                                     }
 
@@ -82,7 +167,11 @@
                                     } elseif (!empty($opening_hours['open']) || !empty($opening_hours['close'])){
                                         echo $opening_hours['open'] . '<br>';
                                         echo $opening_hours['close'] . '<br>';
+                                    } elseif (!empty($opening_hours['open']) && !empty($opening_hours['close']) && $opening_hours['dayOfWeek'] != 'Sunday' && $opening_hours['dayOfWeek'] != 'Saturday' && (count($opening_hours['open']) == "10:00") == 5){
+                                        echo 'ok';
                                     }
+
+
                                     echo '</div>';
 
 
@@ -102,19 +191,16 @@
 
                                         $newDayLine = true;
 
-
-                                        if ($opening_hours['dayOfWeek'] == "Sunday") {
-                                            echo $opening_hours['dayOfWeek'];
+                                        if ($opening_hours['dayOfWeek'] == 'Sunday') {
+                                            echo trad($opening_hours['dayOfWeek'], $lang);
                                         }
-
-
 
 
                                     echo '</div>';
 
                                     echo '<div class="col-6">';
 
-                                        if($opening_hours['isClosed'] && $newDayLine && $opening_hours['dayOfWeek'] == "Sunday"){
+                                        if($opening_hours['isClosed'] && $newDayLine && $opening_hours['dayOfWeek'] == 'Sunday'){
                                             echo trad('closed', $lang);
                                         }
 
@@ -122,7 +208,6 @@
                                 echo '</div>';
                                     }
                                 }
-                                
 
                         echo '</td>';
 
@@ -141,9 +226,7 @@
                             }
                         echo '</td>';
 
-
                     echo '</tr>';
-
 
                 }
 

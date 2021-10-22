@@ -83,7 +83,7 @@ function epfl_restauration_process_shortcode( $atts, $content = null ) {
     //$restaurants = array_values(array_unique($restaurants, SORT_REGULAR));
 
     /* If we want schedule list */
-    if($type=='schedule')
+    if($type == 'schedule')
     {
         /* Prod */
         //$url = 'https://menus.epfl.ch/cgi-bin/getHoraire?'. $params;

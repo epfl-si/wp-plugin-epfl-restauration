@@ -231,6 +231,7 @@ $(".filterTags").on('click',".removeTag", function (){
     selectedMenus.multipleSelect('setSelects', selectedMenusArray);
 
 });
+
 // Filter when selecting a restaurant
 $("select.select-resto").change(function (){
     filterMenus();
@@ -271,23 +272,5 @@ $(".removeAll").click(function () {
     $('select.select-menu').multipleSelect('uncheckAll');
 });
 
-   // $.ajax
-   // ({
-   //     url: "index.php",
-   //     data: {"daySelected": daySelected},
-   //     type: "post",
-   //     success: function (result)
-   //     {
-   //         $(".modal-box").text("dsfjsdf");
-   //     }
-   // });
-   //
-   //  $.ajax({
-   //      type: "POST",
-   //      url: url,
-   //      data: data,
-   //      success: success,
-   //      dataType: dataType
-   //  });
 
 });

@@ -60,11 +60,14 @@ function epfl_restauration_process_shortcode( $atts, $content = null ) {
     }
 
     // Connection to Nutrimenu
-    $remote_url_menus = $ini_array_sections['remote_url']['remote_url_menus'] . $selected_date;
+    if(empty(get_option("epfl_restauration_api_url")) || empty(get_option("epfl_restauration_api_username")) || empty(get_option("epfl_restauration_api_password"))){
+        return error_msg('error_configuration', $lang);
+    }
+    $remote_url_api = get_option("epfl_restauration_api_url") . "?date=" . $selected_date;
 
     // Create a stream
     $cred = sprintf('Authorization: Basic %s',
-        base64_encode($ini_array_sections['remote_url']['username_menus'] . ':' . $ini_array_sections['remote_url']['password_menus']));
+        base64_encode(get_option("epfl_restauration_api_username") . ':' . get_option("epfl_restauration_api_password")));
     $opts = array(
         'http'=>array(
             'method'=>"GET",
@@ -75,29 +78,35 @@ function epfl_restauration_process_shortcode( $atts, $content = null ) {
             "verify_peer_name"=>false,
         )*/
     );
+    /*
+    // Use standard API for remote GET
     $context = stream_context_create($opts);
-    $menus_file = file_get_contents($remote_url_menus, false, $context);
+    $menus_file = file_get_contents($remote_url_api, false, $context);
+    */
+
+    // Use WP API for remote GET
+    $args = array(
+        'headers' => $cred
+        );
+    $request = wp_remote_get($remote_url_api, $args);
+    $menus_file = wp_remote_retrieve_body($request);
+
+    // Error of server not responding correctly
+    if(wp_remote_retrieve_response_code($request) !== 200){
+        return error_msg('error_unavailable', $lang);
+    }
 
     // Decodes JSON's file
     $restaurants = json_decode($menus_file,true);
-    //$restaurants = array_values(array_unique($restaurants, SORT_REGULAR));
+    // Sort Restaurant alpha
+    usort($restaurants, function($a, $b) {return strcmp($a['name'], $b['name']);});
+
+    // Test array for error
+    //$restaurants = [0=>['id'=>'43', 'name'=>"Jeremy cook","menuLines"=>[['id'=>126, 'name'=>"Jeremy's special"]]]];
 
     /* If we want schedule list */
     if($type == 'schedule')
     {
-        /* Prod */
-        //$url = 'https://menus.epfl.ch/cgi-bin/getHoraire?'. $params;
-        /* uncomment following line to access test environment */
-//        $url = 'https://test-menus.epfl.ch/cgi-bin/getHoraire?'. $params;
-/*
-        // A utiliser peut-être
-        $response = wp_remote_get($url);
-
-        if(is_array($response))
-        {
-          return $response['body'];
-        }*/
-
         ob_start();
 
         include('schedule.php');
@@ -134,3 +143,12 @@ function trad($key_to_traduct, $lang) {
     return $ini_array_sections['txt_'.$lang][$key_to_traduct];
 }
 
+// Error function
+function error_msg($error_message, $lang){
+
+    $error_html = '<div class="alert alert-danger" role="alert">
+        <strong>' . trad('error', $lang) . ':</strong> ' . trad($error_message, $lang) . '</div>';
+
+    return $error_html;
+
+}

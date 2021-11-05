@@ -200,6 +200,7 @@
 
                                                     }
                                                     echo '</div>';
+                                        echo '</div>';
                                     echo '</td><td>';
                                     echo '<div class="nutrimenu text-nowrap">';
                                         if (isset($meals['evaluation']['nutriScore'])) {
@@ -214,7 +215,7 @@
                                         }
                                     echo '</div>';
 
-                                    echo '</div>';
+
                                     echo '</td>';
 
                                     echo '<td class="restaurant">';

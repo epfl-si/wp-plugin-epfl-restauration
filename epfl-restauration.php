@@ -25,6 +25,9 @@ function epfl_restauration_process_shortcode( $atts, $content = null ) {
     $params = preg_replace('/^\?/', '', $atts['params']);
     $type = sanitize_text_field($atts['type']);
 
+    /* Including CSS file*/
+    wp_enqueue_style( 'epfl_restauration_style', plugin_dir_url(__FILE__).'css/style.css', [], '2.1');
+
     $images_path = "/wp-content/plugins/epfl-restauration/images/";
 
     $vars = parse_url( $params, $component = -1 );

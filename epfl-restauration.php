@@ -2,11 +2,16 @@
 /**
  * Plugin Name: EPFL Restauration
  * Description: provides a shortcode to display cafeterias and restaurant menus offers
- * Version: 0.3
- * Author: Lucien Chaboudez
- * Contributors:
- * License: Copyright (c) 2019 Ecole Polytechnique Federale de Lausanne, Switzerland
+ * Version: 1.0
+ * Author: Jérémy Wolff
+ * Contributors: Lucien Chaboudez, Quentin Estoppey
+ * License: Copyright (c) 2021 Ecole Polytechnique Federale de Lausanne, Switzerland
  **/
+
+define("REMOTE_SERVER_TIMEOUT", 10);  // time to wait until we consider the remote server out of the game
+define("REMOTE_SERVER_SSL", true);  // force the server to be https certified
+define("LOCAL_CACHE_NAME", 'EPFL_RESTAURATION');  // the option and transient name for the caching
+define("LOCAL_CACHE_TIMEOUT", 10 * 60);  // cache time validity, in seconds
 
 // Configuration with sections
 $ini_array_sections = parse_ini_file("menus.ini", true);
@@ -87,16 +92,33 @@ function epfl_restauration_process_shortcode( $atts, $content = null ) {
     $menus_file = file_get_contents($remote_url_api, false, $context);
     */
 
-    // Use WP API for remote GET
-    $args = array(
-        'headers' => $cred
-        );
-    $request = wp_remote_get($remote_url_api, $args);
-    $menus_file = wp_remote_retrieve_body($request);
+    $cache_key = LOCAL_CACHE_NAME . md5(serialize($remote_url_api));
 
-    // Error of server not responding correctly
-    if(wp_remote_retrieve_response_code($request) !== 200){
-        return error_msg('error_unavailable', $lang);
+    if ((defined('WP_DEBUG') && WP_DEBUG) || false === ( $menus_file = get_transient( $cache_key ) ) ) {    // local tests
+//    if (false === ( $menus_file = get_transient( $cache_key ) ) ) {
+        // No transient, then try to get some data if the cache is empty
+        // Use WP API for remote GET
+        $args = array(
+            'headers' => $cred,
+            'timeout' => REMOTE_SERVER_TIMEOUT,
+            'sslverify' => REMOTE_SERVER_SSL
+        );
+        $request = wp_remote_get($remote_url_api, $args);
+        $menus_file = wp_remote_retrieve_body($request);
+
+        // Error of server not responding correctly
+        if (wp_remote_retrieve_response_code($request) !== 200) {
+            return error_msg('error_unavailable', $lang);
+        }
+
+        if (!empty($menus_file)) {
+            // Save result in the transient cache
+            set_transient($cache_key, $menus_file, LOCAL_CACHE_TIMEOUT);
+        } else {
+            // Nothing or empty result has been returned from the server, reset local entries
+            set_transient($cache_key, [], LOCAL_CACHE_TIMEOUT);
+        }
+
     }
 
     // Decodes JSON's file

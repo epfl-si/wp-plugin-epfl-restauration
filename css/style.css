@@ -1,20 +1,23 @@
-/*img{*/
-/*    width: 75px;*/
-/*    padding-top: 10px;*/
+/* Change color when mouse on selection list */
+.ms-choice:hover{
+    background: #E6E6E6;
+}
+
+/* Hide red list point */
+.ms-drop ul li:before{
+    background: none;
+}
+
+/* Hide [Select all] option (checkboxes) */
+.ms-select-all {
+    display:none !important;
+}
+
+/*span.price {*/
+/*    white-space: nowrap;*/
 /*}*/
 
-/*.ms-choice{*/
-/*    width: 100%;*/
-/*}*/
-
-/*.ms-drop{*/
-/*    width: fit-content;*/
-/*}*/
-
-/*.ms-choice:hover{*/
-/*    background: #E6E6E6;*/
-/*}*/
-
-/*body {*/
-/*    background-color: chocolate;*/
-/*}*/
+/* Normal fontsize for the contact table */
+.single-schedule th,.single-schedule td {
+    font-size: initial;
+}

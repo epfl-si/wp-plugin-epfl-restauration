@@ -1,14 +1,4 @@
-<?php
-    if(!empty($selected_resto_id)){
-        echo '<style>
-        .schedules th,.schedules td {
-            font-size: initial;
-        }
-    </style>';
-    }
-
-?>
-<table class="table schedules tablesaw tablesaw-stack">
+<table class="table tablesaw tablesaw-stack <?php if(!empty($selected_resto_id)) echo 'single-schedule' ?>">
     <thead>
     <tr>
         <th <?php if(!empty($selected_resto_id)) echo 'class="d-none"' ?>><?php echo trad('restaurant', $lang); ?></th>
@@ -35,9 +25,9 @@
                         $day_of_week = "";
                         $newDayLine = true;
                         // Put Sunday hours at end of array (temp fix)
-                        $opening_hours = array_filter($restaurant['openingHours'],function($item){return $item['dayOfWeek']!="Sunday";})+$restaurant['openingHours'];
+                        // $opening_hours = array_filter($restaurant['openingHours'],function($item){return $item['dayOfWeek']!="Sunday";})+$restaurant['openingHours'];
 
-                        foreach ($opening_hours as $opening_hour){
+                        foreach ($restaurant["openingHours"] as $opening_hour){
 
                             echo '<div class="row">';
                                 echo '<div class="col-5">';
@@ -80,14 +70,13 @@
                                 $end_date_timestamp = strtotime($vacations['dateEnd']);
                                 $end_date = date("d.m.Y", $end_date_timestamp);
 
-                                echo '<p>' . trad('from', $lang) . $start_date . trad('to', $lang) . $end_date . '</p>';
+                                echo '<p class="text-nowrap">' . trad('from', $lang) . $start_date . trad('to', $lang) . $end_date . '</p>';
                             }
 
                         }
                     echo '</td>';
                 echo '</tr>';
             }
-
         ?>
     </tbody>
 </table>

@@ -1,25 +1,3 @@
-<style>
-
-    /* Change color when mouse on selection list */
-    .ms-choice:hover{
-        background: #E6E6E6;
-    }
-
-    /* Hide red list point */
-    .ms-drop ul li:before{
-        background: none;
-    }
-
-    /* Hide [Select all] option (checkboxes) */
-    .ms-select-all {
-        display:none !important;
-    }
-
-    span.price {
-        style="white-space: nowrap";
-    }
-</style>
-
 <!--<div class="container-full mx-3">-->
 <div class="container">
     <ul class="nav nav-tabs" role="tablist">

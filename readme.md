@@ -19,7 +19,7 @@ For this, it is required to have an environment as following:
 ## Configuration of the plugin
 Here are a few steps before storing the connection data to the API in the WordPress database:
 - At the root of the directory **wp-dev**, open your WSL2 terminal and type the command _make exec_ (to enter in the _mgmt_ docker container) ;
-- Go into the directory of your web site with the shell command _cd /srv/test/wp-httpd/_ ;
+- Go into the directory of your web site with the shell command _cd /srv/test/wp-httpd/htdocs_ ;
 - Type _wp plugin list_ to be sure that your are in the correct place : you'd note **epfl-restauration** plugin active ;
 - You can now set your connection data to nutriMenu API ✅
 
@@ -49,7 +49,7 @@ _schedule.php_ :
 This file contains nutriMenu dynamic data managed by PHP code. _schedule.php_ represents the **Restaurants opening hours** EPFL web page.
 
 _script.js_ :
-This is the file who contains all the JavaScript (especially JS library jQuery) code.
+This is the file that contains all the JavaScript (especially JS library jQuery) code.
 
 _menus.ini_ :
 In _menus.ini_, you will find the configuration of the URL associated to the restaurants ID and the FR/EN words's dictionnary of the app.

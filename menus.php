@@ -148,6 +148,7 @@
                                     }
 
                                     echo '<tr class="menuPage' . $category . ' ' . $mealtype . '" data-restoid="'.$restaurant['id'].'" data-ns-score="' . $nutri_score_value . '" data-ns-score-txt="' . $nutri_score . '">';
+
                                         echo '<td class="menu">';
                                             echo '<div class="menu-content">';
                                                     echo '<div class="descr">';
@@ -170,7 +171,7 @@
                                                         }
 
                                                         if(!empty($item['recipe']['notesOrigin'])){
-                                                            echo '<em>' . $item['recipe']['notesOrigin'] . '</em><br>';
+                                                            echo '<em>' . trad('origin', $lang) . ': ' . $item['recipe']['notesOrigin'] . '</em><br>';
                                                         }
                                                         if(!empty($item['recipe']['category']) && $item['recipe']['category'] == 'vegetarian' || $item['recipe']['category'] == 'vegan'){
                                                             echo '<img src="' . $images_path . 'vegetarian.svg' . '" alt="Vegetarian" height="20"> <em>' . trad($item['recipe']['category'], $lang) . '</em><br>';
@@ -178,56 +179,70 @@
 
                                                     }
                                                     echo '</div>';
-                                        echo '</div>';
-                                    echo '</td><td>';
-                                    echo '<div class="nutrimenu text-nowrap">';
-                                        if (isset($meals['evaluation']['nutriScore'])) {
+                                            echo '</div>';
+                                        echo '</td>';
 
-                                                echo '<img src="' . $images_path . 'nutriMenu_score_' . $nutri_score . '.svg' . '" alt="NutriScore" height="55">';
+                                        echo '<td>';
+                                            echo '<div class="nutrimenu text-nowrap">';
+                                                if (isset($meals['evaluation']['nutriScore'])) {
 
-                                        }
-                                        if (isset($meals['evaluation']['ecoScore'])) {
+                                                        echo '<img src="' . $images_path . 'nutriMenu_score_' . $nutri_score . '.svg' . '" alt="NutriScore" height="55">';
 
-                                                echo '<img src="' . $images_path . 'ecoMenu_score_' . $eco_score . '.svg' . '" alt="EcoScore" height="55">';
+                                                }
+                                                if (isset($meals['evaluation']['ecoScore'])) {
 
-                                        }
-                                    echo '</div>';
+                                                        echo '<img src="' . $images_path . 'ecoMenu_score_' . $eco_score . '.svg' . '" alt="EcoScore" height="55">';
 
+                                                }
+                                            echo '</div>';
+                                        echo '</td>';
 
-                                    echo '</td>';
+                                        echo '<td class="restaurant">';
+                                            if(isset($ini_array_sections['url_restaurants'][$restaurant['id']])) {
+                                                echo '<a href="' . $ini_array_sections['url_restaurants'][$restaurant['id']] . '">' . $restaurant['name'];
+                                            } else{
+                                                echo $restaurant['name'];
+                                            }
+                                        echo '</td>';
 
-                                    echo '<td class="restaurant">';
-                                        if(isset($ini_array_sections['url_restaurants'][$restaurant['id']])) {
-                                            echo '<a href="' . $ini_array_sections['url_restaurants'][$restaurant['id']] . '">' . $restaurant['name'];
-                                        } else{
-                                            echo $restaurant['name'];
-                                        }
-                                    echo '</td>';
-
-                                    echo '<td class="prices">';
-                                    if (isset($meals['prices']) && count($meals['prices']) > 0) {
-                                        foreach ($meals['prices'] as $price) {
-                                            if(!empty($price['description'])){
-                                                switch ($price['description']) {
-                                                    case "PersonStudent":
-                                                        echo '<span class="price" style="white-space: nowrap"><abbr title="Prix étudiant" class="text-primary">E</abbr> ' . $price['price'] . ' ' . $price['currency'] . ' </span>';
-                                                        break;
-                                                    case "PersonEmployee":
-                                                        echo '<span class="price" style="white-space: nowrap"><abbr title="Prix campus" class="text-primary">C</abbr> ' . $price['price'] . ' ' . $price['currency'] . ' </span>';
-                                                        break;
-                                                    case "PersonOther":
-                                                        echo '<span class="price" style="white-space: nowrap"><abbr title="Prix visiteurs" class="text-primary">V</abbr> ' . $price['price'] . ' ' . $price['currency'] . ' </span>';
-                                                        break;
-                                                    case "PersonDoctorand":
-                                                        echo '<span class="price" style="white-space: nowrap"><abbr title="Prix doctorants" class="text-primary">D</abbr> ' . $price['price'] . ' ' . $price['currency'] . ' </span>';
-                                                        break;
-                                                    default:
-                                                        echo '<span class="price" style="white-space: nowrap">' . $price['price'] . ' ' . $price['currency'] . ' </span>';
+                                        echo '<td class="prices">';
+                                            if (isset($meals['prices']) && count($meals['prices']) > 0) {
+                                                foreach ($meals['prices'] as $price) {
+                                                    if(!empty($price['description'])){
+                                                        echo '<span class="price" style="white-space: nowrap">';
+                                                        switch ($price['description']) {
+                                                            case "PersonStudent":
+                                                                echo '<abbr title="' . trad('student_price', $lang) . '" class="text-primary">E</abbr> ' . $price['price'] . ' ' . $price['currency'];
+                                                                break;
+                                                            case "PersonEmployee":
+                                                                echo '<abbr title="' . trad('campus_price', $lang) . '" class="text-primary">C</abbr> ' . $price['price'] . ' ' . $price['currency'];
+                                                                break;
+                                                            case "PersonOther":
+                                                                echo '<abbr title="' . trad('visitor_price', $lang) . '" class="text-primary">V</abbr> ' . $price['price'] . ' ' . $price['currency'];
+                                                                break;
+                                                            case "PersonDoctorand":
+                                                                echo '<abbr title="' . trad('phd_student_price', $lang) . '" class="text-primary">D</abbr> ' . $price['price'] . ' ' . $price['currency'];
+                                                                break;
+                                                            case "SizeHalf":
+                                                                echo '<abbr title="' . trad('half_portion', $lang) . '" class="text-primary">&#189;</abbr> ' . $price['price'] . ' ' . $price['currency'];
+                                                                break;
+                                                            case "PricePer100gr":
+                                                                echo $price['price'] . ' ' . $price['currency'] . '/100g';
+                                                                break;
+                                                            case "ComboMainStarter":
+                                                                echo '<abbr class="text-primary">' . trad('starter_maincourse', $lang) . '</abbr><br>' . $price['price'] . ' ' . $price['currency'];
+                                                                break;
+                                                            case "ComboMainStarterDesert":
+                                                                echo '<abbr class="text-primary">' . trad('starter_maincourse_dessert', $lang) . '</abbr><br>' . $price['price'] . ' ' . $price['currency'];
+                                                                break;
+                                                            default:
+                                                                echo $price['price'] . ' ' . $price['currency'];
+                                                        }
+                                                        echo '</span>';
+                                                    }
                                                 }
                                             }
-                                        }
-                                    }
-                                    echo '</td>';
+                                        echo '</td>';
 
                                     echo '</tr>';
 

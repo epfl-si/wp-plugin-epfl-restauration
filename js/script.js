@@ -42,15 +42,14 @@ function filterMenus(){
         {"txt": "A+", "val": 13}
     ]
 
-    console.log("NutriScore sélectionné : ");
-    console.log(nutriScoresArray[currentNutriScore]);
+    console.log("NutriScore sélectionné : " + nutriScoresArray[currentNutriScore].val + " text " + nutriScoresArray[currentNutriScore].txt);
 
 
     // Browse the menus list (<tr> -> class="menuPage), show the selected options and hide the unselected ones
     $("#menuTable tr.menuPage").each(function (){
 
         var menuLine = $(this);
-        console.log(menuLine);
+        // console.log(menuLine);
         // By default, the menu line is shown
         menuLine.show();
 
@@ -197,16 +196,16 @@ $(".filterTags").on('click',".removeTag", function (){
     let selectedResto = $('select.select-resto');
     let selectedRestosArray = selectedResto.multipleSelect('getSelects');
 
-    console.log('Selected restaurants tags (before removing the tag) : ');
-    console.log(selectedRestosArray);
+    // console.log('Selected restaurants tags (before removing the tag) : ');
+    // console.log(selectedRestosArray);
 
     // Array of selected restaurants after removing a tag
     selectedRestosArray = $.grep(selectedRestosArray, function(value) {
         return value !== iD;
     });
 
-    console.log('Selected restaurants tags (after removing the tag) : ');
-    console.log(selectedRestosArray);
+    // console.log('Selected restaurants tags (after removing the tag) : ');
+    // console.log(selectedRestosArray);
 
     // Actualise the selected restaurants options after removing the restaurant tag
     selectedResto.multipleSelect('setSelects', selectedRestosArray);
@@ -216,16 +215,16 @@ $(".filterTags").on('click',".removeTag", function (){
     let selectedMenus = $('select.select-menu');
     let selectedMenusArray = selectedMenus.multipleSelect('getSelects');
 
-    console.log('Selected menus types tags (before removing the tag) : ');
-    console.log(selectedMenusArray);
+    // console.log('Selected menus types tags (before removing the tag) : ');
+    // console.log(selectedMenusArray);
 
     // Array of selected menus types after removing a tag
     selectedMenusArray = $.grep(selectedMenusArray, function(value) {
         return value !== iD;
     });
 
-    console.log('Selected menus types tags (after removing the tag) : ');
-    console.log(selectedMenusArray);
+    // console.log('Selected menus types tags (after removing the tag) : ');
+    // console.log(selectedMenusArray);
 
     // Actualise the selected menus types options after removing the menu type tag
     selectedMenus.multipleSelect('setSelects', selectedMenusArray);
@@ -264,7 +263,6 @@ $('input[name=offer-type]').change(function () {
 
 // Remove all tags
 $(".removeAll").click(function () {
-    //
     $('#offer-lunch').prop('checked', true);
     $("#nutrimenu-score").val(0);
     $(".nutriscore-value").text('-');

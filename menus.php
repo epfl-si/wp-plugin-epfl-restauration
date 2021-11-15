@@ -186,12 +186,12 @@
                                             echo '<div class="nutrimenu text-nowrap">';
                                                 if (isset($meals['evaluation']['nutriScore'])) {
 
-                                                        echo '<img src="' . $images_path . 'nutriMenu_score_' . $nutri_score . '.svg' . '" alt="NutriScore" height="55">';
+                                                        echo '<img src="' . $images_path . 'nutriMenu_score_' . strtolower($nutri_score) . '.svg' . '" alt="NutriScore" height="55">';
 
                                                 }
                                                 if (isset($meals['evaluation']['ecoScore'])) {
 
-                                                        echo '<img src="' . $images_path . 'ecoMenu_score_' . $eco_score . '.svg' . '" alt="EcoScore" height="55">';
+                                                        echo '<img src="' . $images_path . 'ecoMenu_score_' . strtolower($eco_score) . '.svg' . '" alt="EcoScore" height="55">';
 
                                                 }
                                             echo '</div>';

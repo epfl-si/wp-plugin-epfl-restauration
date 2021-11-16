@@ -1,0 +1,19 @@
+/* Change color when mouse on selection list */
+.select-resto .ms-choice:hover, .select-menu .ms-choice:hover{
+    background: #E6E6E6;
+}
+
+/* Hide red list point */
+.select-resto .ms-drop ul li:before, .select-menu .ms-drop ul li:before{
+    background: none;
+}
+
+/* Hide [Select all] option (checkboxes) */
+.select-resto .ms-select-all, .select-menu .ms-select-all {
+    display:none !important;
+}
+
+/* Normal fontsize for the contact table */
+.single-schedule th,.single-schedule td {
+    font-size: initial;
+}

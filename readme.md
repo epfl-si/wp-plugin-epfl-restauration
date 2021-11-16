@@ -1,7 +1,7 @@
 # epfl-restauration
 ---
 
-**epfl-restauration** is a WordPress plugin used to display on the  web site the EPFL's daily offers and opening hours of all the restaurants on the campus. This plugin calls an API from nutriMenu where the restaurant staff enters all menus and other data daily on their web platform. PHP and JavaScript (jQuery) are the main languages used to code the app. 
+**epfl-restauration** is a WordPress plugin used to display on the  web site the EPFL's daily offers and opening hours of all the restaurants on the campus. This plugin calls an API from nutriMenu where the restaurant staff enters all menus and other data daily on their web platform. PHP and JavaScript (jQuery) are the main languages used to code the plugin. 
 
 ## Get epfl-restauration plugin
 To get the plugin :

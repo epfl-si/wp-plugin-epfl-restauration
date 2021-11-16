@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-// Filter the menu page according to the restaurants list, menus types list, nutriscore and day offers
+// Filter the menu page according to the restaurants list, menu types list, nutriscore and day offers
 // Hide all the options that are not in the filter
 function filterMenus(){
 
@@ -8,22 +8,6 @@ function filterMenus(){
     var menusTypeList = $("select option:selected.menus");
     var offerType = $('input[name=offer-type]:checked').val();
     var currentNutriScore = $("#nutrimenu-score").val();
-    // const nutriScoresArray = [
-    //     {"txt": "-", "val": 0},
-    //     {"txt": "E", "val": 0.5},
-    //     {"txt": "D-", "val": 0.59999},
-    //     {"txt": "D", "val": 0.62999},
-    //     {"txt": "D+", "val": 0.66999},
-    //     {"txt": "C-", "val": 0.69999},
-    //     {"txt": "C", "val": 0.72999},
-    //     {"txt": "C+", "val": 0.76999},
-    //     {"txt": "B-", "val": 0.79999},
-    //     {"txt": "B", "val": 0.82999},
-    //     {"txt": "B+", "val": 0.86999},
-    //     {"txt": "A-", "val": 0.89999},
-    //     {"txt": "A", "val": 0.92999},
-    //     {"txt": "A+", "val": 0.96999}
-    // ]
 
     const nutriScoresArray = [
         {"txt": "-", "val": 0},
@@ -42,14 +26,11 @@ function filterMenus(){
         {"txt": "A+", "val": 13}
     ]
 
-    console.log("NutriScore sélectionné : " + nutriScoresArray[currentNutriScore].val + " text " + nutriScoresArray[currentNutriScore].txt);
-
-
     // Browse the menus list (<tr> -> class="menuPage), show the selected options and hide the unselected ones
     $("#menuTable tr.menuPage").each(function (){
 
         var menuLine = $(this);
-        // console.log(menuLine);
+
         // By default, the menu line is shown
         menuLine.show();
 
@@ -59,15 +40,10 @@ function filterMenus(){
             let found = false;
             restosList.each(function () {
 
-                // Show in console the selected restaurant
-                // console.log('Selected restaurant : ');
-                // console.log($(this).val() + ' : ' + $(this).text());
-
                 // Test if menu page contains restaurants IDs => test if menuLine is shown
                 //if (menuLine.hasClass($(this).val())) {
                 if (menuLine.attr('data-restoid') === $(this).val()){
                     found = true;
-                    console.log("Menu line is restaurant : " + $(this).val());
                     return false;
                 }
             });
@@ -83,14 +59,9 @@ function filterMenus(){
             let found = false;
             menusTypeList.each(function () {
 
-                // Show in console the menu type
-                // console.log('Selected menu : ');
-                // console.log($(this).val());
-
-                // Test if menu page contains menus types => test if menuLine is shown
+                // Test if menu page contains menu types => test if menuLine is shown
                 if (menuLine.hasClass($(this).val())) {
                     found = true;
-                    console.log("Menu line is type : " + $(this).val());
                 }
 
             });
@@ -112,8 +83,6 @@ function filterMenus(){
             menuLine.hide();
         }
 
-        // console.log('NS du menu (auto) : ' + nsValue + ', NS sélectionné -> ' + nutriScoresArray[currentNutriScore].txt + ' : ' + nutriScoresArray[currentNutriScore].val);
-
     });
 
     $(".nutriscore-value").text(nutriScoresArray[currentNutriScore].txt);
@@ -121,7 +90,7 @@ function filterMenus(){
 }
 
 
-// Add and remove tags, according to selected/unselected options. Actualise the menu page
+// Add and remove tags, according to selected/unselected options. Update the menu page
 function updateTags(){
 
     // Add a tag to the selected restaurants options
@@ -136,7 +105,7 @@ function updateTags(){
 
     });
 
-    // Add a tag to the selected menus types options
+    // Add a tag to the selected menu types options
     $( "select option:selected.menus" ).each(function() {
 
         let menu = $(this).text();
@@ -163,10 +132,10 @@ function updateTags(){
         }
     });
 
-    // Array containing the selected menus types options
+    // Array containing the selected menu types options
     let selectedMenusArray = $('select.select-menu').multipleSelect('getSelects');
 
-    // Remove menus types tags
+    // Remove menu types tags
     $(".menuTag").each(function (){
 
         // Delete "tag-" before the ID in the way to have only the ID
@@ -186,9 +155,6 @@ $(".filterTags").on('click',".removeTag", function (){
     let tagID = $(this).parent().attr('id');
     let iD = tagID.replace('tag-','');
 
-    // Show in console the tag to remove (ID of the restaurant or name of the menu)
-    console.log('Tag to be removed : ' + iD);
-
     $("#"+tagID).remove();
 
     // RESTAURANTS
@@ -196,37 +162,25 @@ $(".filterTags").on('click',".removeTag", function (){
     let selectedResto = $('select.select-resto');
     let selectedRestosArray = selectedResto.multipleSelect('getSelects');
 
-    // console.log('Selected restaurants tags (before removing the tag) : ');
-    // console.log(selectedRestosArray);
-
     // Array of selected restaurants after removing a tag
     selectedRestosArray = $.grep(selectedRestosArray, function(value) {
         return value !== iD;
     });
 
-    // console.log('Selected restaurants tags (after removing the tag) : ');
-    // console.log(selectedRestosArray);
-
-    // Actualise the selected restaurants options after removing the restaurant tag
+    // Update the selected restaurants options after removing the restaurant tag
     selectedResto.multipleSelect('setSelects', selectedRestosArray);
 
-    // MENUS TYPES
-    // Array of selected menus types
+    // MENU TYPES
+    // Array of selected menu types
     let selectedMenus = $('select.select-menu');
     let selectedMenusArray = selectedMenus.multipleSelect('getSelects');
 
-    // console.log('Selected menus types tags (before removing the tag) : ');
-    // console.log(selectedMenusArray);
-
-    // Array of selected menus types after removing a tag
+    // Array of selected menu types after removing a tag
     selectedMenusArray = $.grep(selectedMenusArray, function(value) {
         return value !== iD;
     });
 
-    // console.log('Selected menus types tags (after removing the tag) : ');
-    // console.log(selectedMenusArray);
-
-    // Actualise the selected menus types options after removing the menu type tag
+    // Update the selected menu types options after removing the menu type tag
     selectedMenus.multipleSelect('setSelects', selectedMenusArray);
 
 });
@@ -269,6 +223,5 @@ $(".removeAll").click(function () {
     $('select.select-resto').multipleSelect('uncheckAll');
     $('select.select-menu').multipleSelect('uncheckAll');
 });
-
 
 });

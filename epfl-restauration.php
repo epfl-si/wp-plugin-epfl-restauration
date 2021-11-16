@@ -8,10 +8,10 @@
  * License: Copyright (c) 2021 Ecole Polytechnique Federale de Lausanne, Switzerland
  **/
 
-define("REMOTE_SERVER_TIMEOUT", 10);  // time to wait until we consider the remote server out of the game
-define("REMOTE_SERVER_SSL", true);  // force the server to be https certified
-define("LOCAL_CACHE_NAME", 'EPFL_RESTAURATION');  // the option and transient name for the caching
-define("LOCAL_CACHE_TIMEOUT", 10 * 60);  // cache time validity, in seconds
+define("EPFL_RESTAURATION_REMOTE_SERVER_TIMEOUT", 10);  // time to wait until we consider the remote server out of the game
+define("EPFL_RESTAURATION_REMOTE_SERVER_SSL", true);  // force the server to be https certified
+define("EPFL_RESTAURATION_LOCAL_CACHE_NAME", 'EPFL_RESTAURATION');  // the option and transient name for the caching
+define("EPFL_RESTAURATION_LOCAL_CACHE_TIMEOUT", 10 * 60);  // cache time validity, in seconds
 
 // Configuration with sections
 $ini_array_sections = parse_ini_file("menus.ini", true);
@@ -33,17 +33,13 @@ function epfl_restauration_process_shortcode( $atts, $content = null ) {
     /* Including CSS file*/
     wp_enqueue_style( 'epfl_restauration_style', plugin_dir_url(__FILE__).'css/style.css', [], '2.1');
 
-    $images_path = get_option("home") . "/wp-content/plugins/epfl-restauration/images/";
-
-    $vars = parse_url( $params, $component = -1 );
-
     parse_str($params, $params_array);
 
     // Selection resto_id in URL's parameter
     if(empty($params_array['resto_id'])) {
         $selected_resto_id = null;
     } else {
-        $selected_resto_id = $params_array['resto_id'];
+        $selected_resto_id = (int)$params_array['resto_id'];
     }
 
     // Selection date of the menus
@@ -55,7 +51,9 @@ function epfl_restauration_process_shortcode( $atts, $content = null ) {
 
     // Language settings
     // Try to get language from WordPress
-    if(get_locale() == "en_US" || get_locale() == "en_GB") $params_array['lang'] = "en";
+    if(get_locale() == "en_US" || get_locale() == "en_GB") {
+        $params_array['lang'] = "en";
+    }
     // Language set to french if empty
     if (empty($params_array['lang']) || $params_array['lang'] == 'fr') {
         $lang = 'fr';
@@ -73,35 +71,19 @@ function epfl_restauration_process_shortcode( $atts, $content = null ) {
     }
     $remote_url_api = get_option("epfl_restauration_api_url") . "?date=" . $selected_date;
 
-    // Create a stream
-    $cred = sprintf('Authorization: Basic %s',
-        base64_encode(get_option("epfl_restauration_api_username") . ':' . get_option("epfl_restauration_api_password")));
-    $opts = array(
-        'http'=>array(
-            'method'=>"GET",
-            'header' => $cred
-        ),
-        /*"ssl"=>array(
-            "verify_peer"=>false,
-            "verify_peer_name"=>false,
-        )*/
-    );
-    /*
-    // Use standard API for remote GET
-    $context = stream_context_create($opts);
-    $menus_file = file_get_contents($remote_url_api, false, $context);
-    */
-
-    $cache_key = LOCAL_CACHE_NAME . md5(serialize($remote_url_api));
+    $cache_key = EPFL_RESTAURATION_LOCAL_CACHE_NAME . md5(serialize($remote_url_api));
 
     if ((defined('WP_DEBUG') && WP_DEBUG) || false === ( $menus_file = get_transient( $cache_key ) ) ) {    // local tests
-//    if (false === ( $menus_file = get_transient( $cache_key ) ) ) {
         // No transient, then try to get some data if the cache is empty
+        // Create a stream
+        $cred = sprintf('Authorization: Basic %s',
+            base64_encode(get_option("epfl_restauration_api_username") . ':' . get_option("epfl_restauration_api_password")));
+
         // Use WP API for remote GET
         $args = array(
             'headers' => $cred,
-            'timeout' => REMOTE_SERVER_TIMEOUT,
-            'sslverify' => REMOTE_SERVER_SSL
+            'timeout' => EPFL_RESTAURATION_REMOTE_SERVER_TIMEOUT,
+            'sslverify' => EPFL_RESTAURATION_REMOTE_SERVER_SSL
         );
         $request = wp_remote_get($remote_url_api, $args);
         $menus_file = wp_remote_retrieve_body($request);
@@ -113,21 +95,15 @@ function epfl_restauration_process_shortcode( $atts, $content = null ) {
 
         if (!empty($menus_file)) {
             // Save result in the transient cache
-            set_transient($cache_key, $menus_file, LOCAL_CACHE_TIMEOUT);
+            set_transient($cache_key, $menus_file, EPFL_RESTAURATION_LOCAL_CACHE_TIMEOUT);
         } else {
             // Nothing or empty result has been returned from the server, reset local entries
-            set_transient($cache_key, [], LOCAL_CACHE_TIMEOUT);
+            set_transient($cache_key, [], EPFL_RESTAURATION_LOCAL_CACHE_TIMEOUT);
         }
-
     }
 
-    // Decodes JSON's file
     $restaurants = json_decode($menus_file,true);
-    // Sort Restaurant alpha
     usort($restaurants, function($a, $b) {return strcmp($a['name'], $b['name']);});
-
-    // Test array for error
-    //$restaurants = [0=>['id'=>'43', 'name'=>"Jeremy cook","menuLines"=>[['id'=>126, 'name'=>"Jeremy's special"]]]];
 
     /* If we want schedule list */
     if($type == 'schedule')
@@ -148,17 +124,15 @@ function epfl_restauration_process_shortcode( $atts, $content = null ) {
         include('menus.php');
 
         return ob_get_clean();
-
     }
-
 }
 
 add_action( 'init', function() {
-  // define the shortcode
+  // Define the shortcode
   add_shortcode('epfl_restauration', 'epfl_restauration_process_shortcode');
 });
 
-// Web page content traduction
+// Web page content translation
 function trad($key_to_traduct, $lang) {
     global $ini_array_sections;
 
@@ -168,7 +142,7 @@ function trad($key_to_traduct, $lang) {
     return $ini_array_sections['txt_'.$lang][$key_to_traduct];
 }
 
-// Error function
+// Render an error message to be displayed in lieu of the menu in case of an error
 function error_msg($error_message, $lang){
 
     $error_html = '<div class="alert alert-danger" role="alert">

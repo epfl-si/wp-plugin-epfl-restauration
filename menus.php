@@ -112,16 +112,17 @@
                         $restaurants = Array();
                     }
 
+                    $images_path = plugin_dir_url(__FILE__) . "images/";
+
                     foreach ($restaurants as $restaurant) {
                         foreach ($restaurant['menuLines'] as $menuLine) {
-                            $category = "";
-                            $mealtype = "";
-                            $nutri_score_value = null;
-                            $nutri_score = null;
-
                             if(!empty($menuLine['meals']) && is_array($menuLine['meals']) && count($menuLine['meals']) > 0){
-
                                 foreach ($menuLine['meals'] as $meals){
+                                    $category = "";
+                                    $mealtype = "";
+                                    $nutri_score_value = $nutri_score = null;
+                                    $eco_score = $eco_score_value = null;
+
                                     if(is_array($meals['items']) && count($meals['items']) > 0){
                                         foreach ($meals['items'] as $item){
                                             if($item['menuSection'] == 'mainCourse' && !empty($item['recipe']['category']) && $item['recipe']['category']!="unclassified"){
@@ -184,15 +185,11 @@
 
                                         echo '<td>';
                                             echo '<div class="nutrimenu text-nowrap">';
-                                                if (isset($meals['evaluation']['nutriScore'])) {
-
+                                                if (isset($nutri_score)) {
                                                         echo '<img src="' . $images_path . 'nutriMenu_score_' . strtolower($nutri_score) . '.svg' . '" alt="NutriScore" height="55">';
-
                                                 }
-                                                if (isset($meals['evaluation']['ecoScore'])) {
-
+                                                if (isset($eco_score)) {
                                                         echo '<img src="' . $images_path . 'ecoMenu_score_' . strtolower($eco_score) . '.svg' . '" alt="EcoScore" height="55">';
-
                                                 }
                                             echo '</div>';
                                         echo '</td>';
@@ -257,7 +254,3 @@
         </div>
     </div>
 </div>
-
-
-
-

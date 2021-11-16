@@ -1,21 +1,17 @@
 /* Change color when mouse on selection list */
-.ms-choice:hover{
+.select-resto .ms-choice:hover, .select-menu .ms-choice:hover{
     background: #E6E6E6;
 }
 
 /* Hide red list point */
-.ms-drop ul li:before{
+.select-resto .ms-drop ul li:before, .select-menu .ms-drop ul li:before{
     background: none;
 }
 
 /* Hide [Select all] option (checkboxes) */
-.ms-select-all {
+.select-resto .ms-select-all, .select-menu .ms-select-all {
     display:none !important;
 }
-
-/*span.price {*/
-/*    white-space: nowrap;*/
-/*}*/
 
 /* Normal fontsize for the contact table */
 .single-schedule th,.single-schedule td {

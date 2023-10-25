@@ -84,6 +84,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="row">
                 <div class="col-12">
                     <div class="tag-group mb-3">
@@ -96,9 +97,12 @@
                 </div>
             </div>
             <div class="tablesaw-container">
-                <table class="table table-restauration tablesaw tablesaw-stack" data-tablesaw-mode="stack" id="menuTable">
-                    <thead class="sr-only">
-                    <th></th>
+                <table class="table table-restauration table-sortable" data-tablesaw-sortable data-tablesaw-mode="stack" id="menuTable">
+                    <thead>
+                        <th data-tablesaw-sortable-col><?php echo trad('offer', $lang) ?></th>
+                        <th>nutri/ecoMenu Score</th>
+                        <th data-tablesaw-sortable-col><?php echo trad('restaurant', $lang) ?></th>
+                        <th data-tablesaw-sortable-col data-tablesaw-sortable-numeric><?php echo trad('price', $lang) ?></th>
                     </thead>
                     <tbody>
                     <?php
@@ -113,6 +117,19 @@
                     }
 
                     $images_path = plugin_dir_url(__FILE__) . "images/";
+
+                    // Set a defined price order display
+                    $prices_levels_order = array(
+                        "PersonStudent",
+                        "PersonEmployee",
+                        "PersonDoctorand",
+                        "PersonOther",
+                        "PricePer100gr",
+                        "SizeHalf",
+                        "ComboMainStarter",
+                        "ComboMainStarterDesert"
+                    );
+
 
                     foreach ($restaurants as $restaurant) {
                         foreach ($restaurant['menuLines'] as $menuLine) {
@@ -204,12 +221,19 @@
 
                                         echo '<td class="prices">';
                                             if (isset($meals['prices']) && count($meals['prices']) > 0) {
+                                                // Sort the table price from a custom order $prices_levels_order
+                                                usort($meals['prices'], function ($a, $b) use ($prices_levels_order) {
+                                                    $pos_a = array_search($a['description'], $prices_levels_order);
+                                                    $pos_b = array_search($b['description'], $prices_levels_order);
+                                                    return $pos_a - $pos_b;
+                                                });
+
                                                 foreach ($meals['prices'] as $price) {
                                                     if(!empty($price['description'])){
                                                         echo '<span class="price" style="white-space: nowrap">';
                                                         switch ($price['description']) {
                                                             case "PersonStudent":
-                                                                echo '<abbr title="' . trad('student_price', $lang) . '" class="text-primary">E</abbr> ' . $price['price'] . ' ' . $price['currency'];
+                                                                echo '<abbr title="' . trad('student_price', $lang) . '" class="text-primary">E</abbr> ' . $price['price'] . ' '. $price['currency'];
                                                                 break;
                                                             case "PersonEmployee":
                                                                 echo '<abbr title="' . trad('campus_price', $lang) . '" class="text-primary">C</abbr> ' . $price['price'] . ' ' . $price['currency'];
@@ -254,3 +278,4 @@
         </div>
     </div>
 </div>
+

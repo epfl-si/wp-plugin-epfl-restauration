@@ -100,7 +100,7 @@
                 <table class="table table-restauration table-sortable" data-tablesaw-sortable data-tablesaw-mode="stack" id="menuTable">
                     <thead>
                         <th data-tablesaw-sortable-col><?php echo trad('offer', $lang) ?></th>
-                        <th>nutri/ecoMenu Score</th>
+                        <th><?php echo trad('score', $lang) ?></th>
                         <th data-tablesaw-sortable-col><?php echo trad('restaurant', $lang) ?></th>
                         <th data-tablesaw-sortable-col data-tablesaw-sortable-numeric><?php echo trad('price', $lang) ?></th>
                     </thead>

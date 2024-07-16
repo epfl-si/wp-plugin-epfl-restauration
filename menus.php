@@ -117,6 +117,7 @@
                     }
 
                     $images_path = plugin_dir_url(__FILE__) . "images/";
+                    $allergens_img_path = $images_path . "allergens/";
 
                     // Set a defined price order display
                     $prices_levels_order = array(
@@ -129,7 +130,6 @@
                         "ComboMainStarter",
                         "ComboMainStarterDesert"
                     );
-
 
                     foreach ($restaurants as $restaurant) {
                         foreach ($restaurant['menuLines'] as $menuLine) {
@@ -155,7 +155,8 @@
                                     }
 
                                     $mealtype = $meals['mealType'];
-
+                                    
+                                    // Check for nutriScore and ecoScore
                                     if(!empty($meals['evaluation']['nutriScore'])) {
                                         $nutri_score = $meals['evaluation']['nutriScore'];
                                         $nutri_score_value = array_search($nutri_score,$nutri_score_array);
@@ -188,11 +189,23 @@
                                                             }
                                                         }
 
+                                                        // Display any origin notes
                                                         if(!empty($item['recipe']['notesOrigin'])){
                                                             echo '<em>' . trad('origin', $lang) . ': ' . $item['recipe']['notesOrigin'] . '</em><br>';
                                                         }
+
+                                                        // Display any vegetarian or vegan category
                                                         if(!empty($item['recipe']['category']) && $item['recipe']['category'] == 'vegetarian' || $item['recipe']['category'] == 'vegan'){
                                                             echo '<img src="' . $images_path . 'vegetarian.svg' . '" alt="Vegetarian" height="20"> <em>' . trad($item['recipe']['category'], $lang) . '</em><br>';
+                                                        }
+
+                                                        // Display any labels (allergens)
+                                                        if(!empty($item['recipe']['labels']) && is_array($item['recipe']['labels']) && count($item['recipe']['labels']) > 0){
+                                                            echo '<em>' . trad('allergen', $lang) . ((count($item['recipe']['labels']) > 1 && $lang == 'fr') ? 's' : '') . ': ';
+                                                            foreach ($item['recipe']['labels'] as $label) {
+                                                                echo '<img src="' . $allergens_img_path . $label['label'] . '.svg' . '" alt="' . $label['label'] . '" height="20"> <em>' . trad($label['label'], $lang) . ' ' . '</em>';
+                                                            }
+                                                            echo '<br><br>';
                                                         }
 
                                                     }

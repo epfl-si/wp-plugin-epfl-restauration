@@ -10,8 +10,8 @@ To get the epfl-restauration plugin, then access the nutriMenu API and obtain re
 need to set identification data as the **username**, **password** and the **URL** to nutriMenu.
 First we need to deploy the application in a container and it is better to have a Linux kernel machine.
 Here's the environment we need to install the plugin, configure it and deploy it:
-- A Linux OS virtual machine (e.g. Debian) or WSL (a Windows Subsystem for Linux if your OS is not a Linux kernel) ;
-- Docker (to deploy the app inside a container). Follow the steps to install Docker for Debian: *https://docs.docker.com/engine/install/debian/* ;
+- A Linux OS virtual machine (e.g. Debian) or WSL (Windows Subsystem for Linux if your OS is not a Linux kernel) ;
+- Docker (to deploy the app inside a container). Follow the steps to install Docker for Debian: *https://docs.docker.com/engine/install/debian/*.
 
 However, we encountered a problem when installing the plugin with WSL on a Windows 11 operating system. 
 We therefore recommend that you install a Linux VM instead of using WSL if you have a Windows OS machine.

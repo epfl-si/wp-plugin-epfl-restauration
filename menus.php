@@ -140,7 +140,7 @@
                                     $nutri_score_value = $nutri_score = null;
                                     $eco_score = $eco_score_value = null;
 
-                                    if(is_array($meals['items']) && count($meals['items']) > 0){
+                                    if(array_key_exists('items', $meals) && is_array($meals['items']) && count($meals['items']) > 0){
                                         foreach ($meals['items'] as $item){
                                             if($item['menuSection'] == 'mainCourse' && !empty($item['recipe']['category']) && $item['recipe']['category']!="unclassified"){
                                                 $category = $category . ' ' . $item['recipe']['category'];
